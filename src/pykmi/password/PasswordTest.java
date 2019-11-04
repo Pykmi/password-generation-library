@@ -19,11 +19,11 @@ public class PasswordTest {
         g.use(Set.ALPHABET, Set.DIGITS);
 
         Password password = g.generate();
-        String unshuffled = password.toString();
+        String original = password.toString();
 
         password.shuffle();
         String shuffled = password.toString();
 
-        Assert.assertFalse(unshuffled.equals(shuffled));
+        Assert.assertNotEquals(original, shuffled);
     }
 }

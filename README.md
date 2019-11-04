@@ -1,4 +1,4 @@
-# Password Generator
+# Password Generation Library
 A minimalistic library for generating random passwords.
 
 ## Features

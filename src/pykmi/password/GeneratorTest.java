@@ -2,9 +2,11 @@ package pykmi.password;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * Tests the Generator class.
@@ -46,7 +48,7 @@ public class GeneratorTest {
      */
     private Password create(int length, boolean caps, Set... sets) {
         Generator g = new Generator();
-        Arrays.asList(sets).forEach((set) -> g.use(set));
+        Arrays.asList(sets).forEach(g::use);
         g.setLength(length);
 
         if(!caps) {
@@ -61,17 +63,12 @@ public class GeneratorTest {
      */
     @Test
     public void shouldAnalysePasswordLengths() {
-        Password password = this.create(50, true, Set.ALPHABET);
-        Assert.assertEquals(50, password.toString().length());
-
-        password = this.create(40, true, Set.ALPHABET);
-        Assert.assertEquals(40, password.toString().length());
-
-        password = this.create(30, true, Set.ALPHABET);
-        Assert.assertEquals(30, password.toString().length());
-
-        password = this.create(20, true, Set.ALPHABET);
-        Assert.assertEquals(20, password.toString().length());
+        IntStream.range(1,6)
+            .map(length -> length * 10)
+            .forEach((length -> {
+                Password password = this.create(length, true, Set.ALPHABET);
+                Assert.assertEquals(length, password.toString().length());
+            }));
     }
 
     /**
@@ -83,11 +80,7 @@ public class GeneratorTest {
         password
             .toString()
             .chars()
-            .forEach((ch) -> Assert.assertEquals(
-                    true,
-                    new String(Set.ALPHABET.getValue()).contains(Character.toString(ch))
-                    )
-            );
+            .forEach((ch) -> Assert.assertTrue(new String(Set.ALPHABET.getValue()).contains(Character.toString(ch))));
     }
 
     /**
@@ -101,11 +94,7 @@ public class GeneratorTest {
         password
             .toString()
             .chars()
-            .forEach((ch) -> Assert.assertEquals(
-                    true,
-                    approved.contains(Character.toUpperCase((char)ch))
-                )
-            );
+            .forEach((ch) -> Assert.assertTrue(approved.contains(Character.toUpperCase((char) ch))));
     }
 
     /**
@@ -113,17 +102,13 @@ public class GeneratorTest {
      */
     @Test
     public void shouldContainBrackets() {
-        ArrayList<Character> approved = this.approve(true, Set.BRACKETS);
+        ArrayList<Character> approved = this.approve(false, Set.BRACKETS);
 
         Password password = this.create(10, true, Set.BRACKETS);
         password
-                .toString()
-                .chars()
-                .forEach((ch) -> Assert.assertEquals(
-                        true,
-                        approved.contains((char)ch)
-                        )
-                );
+            .toString()
+            .chars()
+            .forEach((ch) -> Assert.assertTrue(approved.contains((char) ch)));
     }
 
     /**
@@ -131,16 +116,12 @@ public class GeneratorTest {
      */
     @Test
     public void shouldContainSpecials() {
-        ArrayList<Character> approved = this.approve(true, Set.SPECIAL);
+        ArrayList<Character> approved = this.approve(false, Set.SPECIAL);
 
         Password password = this.create(10, true, Set.SPECIAL);
         password
-                .toString()
-                .chars()
-                .forEach((ch) -> Assert.assertEquals(
-                        true,
-                        approved.contains((char)ch)
-                        )
-                );
+            .toString()
+            .chars()
+            .forEach((ch) -> Assert.assertTrue(approved.contains((char) ch)));
     }
 }
